@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/events', require('./routes/events'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/people', require('./routes/people'));
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'Memory Timeline API running' }));
