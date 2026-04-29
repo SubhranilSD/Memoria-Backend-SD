@@ -47,9 +47,25 @@ router.get('/me', protect, async (req, res) => {
 // Update profile
 router.put('/me', protect, async (req, res) => {
   try {
-    const { name, avatar } = req.body;
-    const user = await User.findByIdAndUpdate(req.user._id, { name, avatar }, { new: true }).select('-password');
-    res.json(user);
+    const { name, avatar, email, password } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (name) user.name = name;
+    if (avatar) user.avatar = avatar;
+    if (email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists && emailExists._id.toString() !== req.user._id.toString()) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      user.email = email;
+    }
+    if (password) user.password = password;
+
+    await user.save();
+    
+    // Don't return password in response
+    const updatedUser = await User.findById(user._id).select('-password');
+    res.json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
