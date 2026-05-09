@@ -12,6 +12,7 @@ const eventSchema = new mongoose.Schema({
   },
   media: [{
     url: { type: String },
+    thumbnailUrl: { type: String },
     publicId: { type: String },
     type: { type: String, enum: ['image', 'video'], default: 'image' },
     focalPoint: {

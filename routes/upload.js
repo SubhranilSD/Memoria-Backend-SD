@@ -6,14 +6,16 @@ const { protect } = require('../middleware/auth');
 // In production, integrate with Cloudinary or AWS S3
 router.post('/', protect, async (req, res) => {
   try {
-    const { base64, filename } = req.body;
-    // In production: upload to Cloudinary
+    const { base64, thumbnailBase64, filename } = req.body;
+    // In production: upload both to Cloudinary
     // const result = await cloudinary.uploader.upload(base64, { folder: 'memory-timeline' });
-    // res.json({ url: result.secure_url, publicId: result.public_id });
+    // const thumbResult = await cloudinary.uploader.upload(thumbnailBase64, { folder: 'memory-timeline-thumbs' });
+    // res.json({ url: result.secure_url, thumbnailUrl: thumbResult.secure_url, publicId: result.public_id });
 
-    // For demo, return the base64 as URL
+    // For demo, return the base64 strings
     res.json({
       url: base64,
+      thumbnailUrl: thumbnailBase64 || base64,
       publicId: `demo_${Date.now()}`,
       type: 'image'
     });
