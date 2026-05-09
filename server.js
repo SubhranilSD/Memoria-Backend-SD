@@ -4,9 +4,16 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 
+// Gzip compression — reduces API response size 60-80%
+let compression;
+try { compression = require('compression'); } catch(e) { compression = null; }
+
 dotenv.config();
 
 const app = express();
+
+// Apply compression before all routes
+if (compression) app.use(compression());
 
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
