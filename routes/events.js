@@ -48,11 +48,13 @@ router.get('/', protect, async (req, res) => {
     else if (sort === 'sortIndex') sortObj = { sortIndex: 1 };
     else sortObj = { createdAt: -1 };
 
+    const total = await Event.countDocuments(query);
     const events = await Event.find(query)
       .sort(sortObj)
       .skip(parseInt(skip))
       .limit(parseInt(limit));
-    res.json(events);
+      
+    res.json({ events, total });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
