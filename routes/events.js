@@ -7,7 +7,7 @@ const { protect } = require('../middleware/auth');
 // Get all events for user
 router.get('/', protect, async (req, res) => {
   try {
-    const { sort = 'date', order = 'desc', tag, mood } = req.query;
+    const { sort = 'date', order = 'desc', tag, mood, limit = 0, skip = 0 } = req.query;
     const query = { user: req.user._id };
     if (tag) query.tags = tag;
     if (mood) query.mood = mood;
@@ -36,7 +36,10 @@ router.get('/', protect, async (req, res) => {
     else if (sort === 'sortIndex') sortObj = { sortIndex: 1 };
     else sortObj = { createdAt: -1 };
 
-    const events = await Event.find(query).sort(sortObj);
+    const events = await Event.find(query)
+      .sort(sortObj)
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
