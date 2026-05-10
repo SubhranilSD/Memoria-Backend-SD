@@ -48,11 +48,13 @@ router.get('/', protect, async (req, res) => {
     else if (sort === 'sortIndex') sortObj = { sortIndex: 1 };
     else sortObj = { createdAt: -1 };
 
-    const total = await Event.countDocuments(query);
+    const total = await Event.countDocuments(query).lean();
     const events = await Event.find(query)
       .sort(sortObj)
       .skip(parseInt(skip))
-      .limit(parseInt(limit));
+      .limit(parseInt(limit))
+      .select('title date location mood media people tags isPrivate description createdAt')
+      .lean();
       
     res.json({ events, total });
   } catch (err) {
