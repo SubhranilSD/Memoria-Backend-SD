@@ -7,10 +7,22 @@ const { protect } = require('../middleware/auth');
 // Get all events for user
 router.get('/', protect, async (req, res) => {
   try {
-    const { sort = 'date', order = 'desc', tag, mood, limit = 0, skip = 0 } = req.query;
+    const { sort = 'date', order = 'desc', tag, mood, limit = 0, skip = 0, search, person } = req.query;
     const query = { user: req.user._id };
     if (tag) query.tags = tag;
     if (mood) query.mood = mood;
+    if (person) query.people = person;
+
+    if (search) {
+      const s = new RegExp(search, 'i');
+      query.$or = [
+        { title: s },
+        { description: s },
+        { location: s },
+        { tags: { $in: [s] } },
+        { people: { $in: [s] } }
+      ];
+    }
 
     // Check Vault Token
     let vaultUnlocked = false;
